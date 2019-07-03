@@ -4,6 +4,26 @@ import styles from './Home.css';
 
 const record = require('node-record-lpcm16');
 const speech = require('@google-cloud/speech');
+const robot = require('robotjs');
+
+const commands = [
+  {
+    name: 'type',
+    execute(text) {
+      robot.typeString(text);
+    }
+  }
+];
+
+const interpreter = {
+  interpret(text) {
+    const command = commands.filter(x => text.startsWith(x.name))[0];
+    const position = command.name.length + 1;
+    const args = text.length > position ? text.substring(position) : '';
+
+    command.execute(args);
+  }
+};
 
 const microphoneRecord = () => {
   const client = new speech.SpeechClient();
@@ -24,15 +44,12 @@ const microphoneRecord = () => {
   const recognizeStream = client
     .streamingRecognize(request)
     .on('error', console.error)
-    .on('data', data =>
-      process.stdout.write(
-        data.results[0] && data.results[0].alternatives[0]
-          ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
-          : `\n\nReached transcription time limit, press Ctrl+C\n`
-      )
-    );
+    .on('data', data => {
+      const text = data.results[0].alternatives[0].transcript.trim();
+      process.stdout.write(`Transcription: ${text}\n`);
+      interpreter.interpret(text);
+    });
 
-  // Start recording and send the microphone input to the Speech API
   record
     .start({
       sampleRateHertz,
@@ -44,8 +61,6 @@ const microphoneRecord = () => {
     })
     .on('error', console.error)
     .pipe(recognizeStream);
-
-  console.log('Listening, press Ctrl+C to stop.');
 };
 
 const Home = () => {
@@ -57,8 +72,8 @@ const Home = () => {
       <button
         type="button"
         onClick={() => {
-          setIsRecording(false);
-          microphoneRecord(isRecording);
+          setIsRecording(!isRecording);
+          microphoneRecord();
         }}
       >
         {isRecording ? 'On' : 'Off'}
