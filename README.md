@@ -9,7 +9,10 @@ Install the dependencies with **yarn** (only that package manager).
 
 ```bash
 $ yarn
+$ sudo apt-get install sox libsox-fmt-all
 ```
+
+And sox for linux (see more in https://cloud.google.com/speech-to-text/docs/streaming-recognize?hl=es#speech-streaming-mic-recognize-nodejs)
 
 ## Starting Development
 

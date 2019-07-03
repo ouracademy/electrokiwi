@@ -49,3 +49,6 @@ main.js.map
 
 .idea
 npm-debug.log.*
+
+# google speech api credentials
+service-account-file.json
