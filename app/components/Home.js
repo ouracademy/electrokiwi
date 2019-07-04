@@ -6,22 +6,48 @@ const record = require('node-record-lpcm16');
 const speech = require('@google-cloud/speech');
 const robot = require('robotjs');
 
+const type = {
+  name: 'type',
+  execute(text) {
+    robot.typeString(text);
+  }
+};
+
 const commands = [
+  type,
   {
-    name: 'type',
+    name: 'delete',
+    // eslint-disable-next-line no-unused-vars
     execute(text) {
-      robot.typeString(text);
+      robot.keyTap('backspace');
+    }
+  },
+  {
+    name: 'enter',
+    // eslint-disable-next-line no-unused-vars
+    execute(text) {
+      robot.keyTap('enter');
+    }
+  },
+  {
+    name: 'select',
+    // eslint-disable-next-line no-unused-vars
+    execute(text) {
+      robot.keyTap('left', ['control', 'shift']);
     }
   }
 ];
 
 const interpreter = {
   interpret(text) {
-    const command = commands.filter(x => text.startsWith(x.name))[0];
-    const position = command.name.length + 1;
-    const args = text.length > position ? text.substring(position) : '';
-
-    command.execute(args);
+    const command = commands.find(x => text.startsWith(x.name));
+    if (command) {
+      const position = command.name.length + 1;
+      const args = text.length > position ? text.substring(position) : '';
+      command.execute(args);
+    } else {
+      type.execute(text);
+    }
   }
 };
 
@@ -46,7 +72,7 @@ const microphoneRecord = () => {
     .on('error', console.error)
     .on('data', data => {
       const text = data.results[0].alternatives[0].transcript.trim();
-      process.stdout.write(`Transcription: ${text}\n`);
+      process.stdout.write(`Transcription: '${text}'\n`);
       interpreter.interpret(text);
     });
 
