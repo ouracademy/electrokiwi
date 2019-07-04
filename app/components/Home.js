@@ -13,6 +13,15 @@ const type = {
   }
 };
 
+const commandsFor = commands =>
+  commands.split(',').map(x => ({
+    name: x,
+    // eslint-disable-next-line no-unused-vars
+    execute(text) {
+      robot.keyTap(x);
+    }
+  }));
+
 const commands = [
   type,
   {
@@ -22,13 +31,7 @@ const commands = [
       robot.keyTap('backspace');
     }
   },
-  {
-    name: 'enter',
-    // eslint-disable-next-line no-unused-vars
-    execute(text) {
-      robot.keyTap('enter');
-    }
-  },
+  ...commandsFor('enter,up,down,right,left'),
   {
     name: 'select',
     // eslint-disable-next-line no-unused-vars
