@@ -4,12 +4,20 @@ import styles from './Home.css';
 
 const record = require('node-record-lpcm16');
 const speech = require('@google-cloud/speech');
-const robot = require('robotjs');
+const keyboard = require('node-key-sender');
 
 const type = {
   name: 'type',
   execute(text) {
-    robot.typeString(text);
+    // TODO: must be executed when someone says:
+    // use symbols
+    keyboard.sendText(
+      text
+        .replace('open bracket', '{') // this is [ (bug of node-key-sender)
+        .replace('open brace', '[') // this is {
+        .replace('two points', ':')
+        .replace('quote', "'")
+    );
   }
 };
 
@@ -18,7 +26,7 @@ const commandsFor = commands =>
     name: x,
     // eslint-disable-next-line no-unused-vars
     execute(text) {
-      robot.keyTap(x);
+      keyboard.sendKey(x);
     }
   }));
 
@@ -27,14 +35,14 @@ const commands = [
     name: 'delete',
     // eslint-disable-next-line no-unused-vars
     execute(text) {
-      robot.keyTap('backspace');
+      keyboard.sendKey('back_space');
     }
   },
   {
     name: 'copy',
     // eslint-disable-next-line no-unused-vars
     execute(text) {
-      robot.keyTap('c', ['control']);
+      keyboard.sendCombination(['control', 'c']);
     }
   },
 
@@ -42,7 +50,7 @@ const commands = [
     name: 'paste',
     // eslint-disable-next-line no-unused-vars
     execute(text) {
-      robot.keyTap('v', ['control']);
+      keyboard.sendCombination(['control', 'v']);
     }
   },
   ...commandsFor('enter,up,down,right,left'),
@@ -50,7 +58,7 @@ const commands = [
     name: 'select',
     // eslint-disable-next-line no-unused-vars
     execute(text) {
-      robot.keyTap('left', ['control', 'shift']);
+      keyboard.sendCombination(['control', 'shift', 'left']);
     }
   },
   type

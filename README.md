@@ -6,13 +6,13 @@ See more [docs and guides here](https://electron-react-boilerplate.js.org/docs/i
 ## Install
 
 Install the dependencies with **yarn** (only that package manager).
-But before install you need to install some stuff for speech recognition (see more in https://cloud.google.com/speech-to-text/docs/streaming-recognize?hl=es#speech-streaming-mic-recognize-nodejs), as well ass for Robot.js (see more in http://robotjs.io/docs/building)
+But before install you need to install some stuff for speech recognition (see more in https://cloud.google.com/speech-to-text/docs/streaming-recognize?hl=es#speech-streaming-mic-recognize-nodejs), as well as Java (>= 8) for using node-key-sender (the library for typing)
 
 For example in ubuntu, you install it using the following commands
 
 ```bash
 $ sudo apt-get install sox libsox-fmt-all # for speech
-$ sudo apt-get install libxtst-dev libpng++-dev # for robotjs
+$ sudo apt-get install default-jdk # for node-key-sender
 $ yarn
 ```
 
