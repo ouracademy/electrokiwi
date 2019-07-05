@@ -23,12 +23,26 @@ const commandsFor = commands =>
   }));
 
 const commands = [
-  type,
   {
     name: 'delete',
     // eslint-disable-next-line no-unused-vars
     execute(text) {
       robot.keyTap('backspace');
+    }
+  },
+  {
+    name: 'copy',
+    // eslint-disable-next-line no-unused-vars
+    execute(text) {
+      robot.keyTap('c', ['control']);
+    }
+  },
+
+  {
+    name: 'paste',
+    // eslint-disable-next-line no-unused-vars
+    execute(text) {
+      robot.keyTap('v', ['control']);
     }
   },
   ...commandsFor('enter,up,down,right,left'),
@@ -38,7 +52,8 @@ const commands = [
     execute(text) {
       robot.keyTap('left', ['control', 'shift']);
     }
-  }
+  },
+  type
 ];
 
 const interpreter = {
@@ -74,7 +89,9 @@ const microphoneRecord = () => {
     .streamingRecognize(request)
     .on('error', console.error)
     .on('data', data => {
-      const text = data.results[0].alternatives[0].transcript.trim();
+      const text = data.results[0].alternatives[0].transcript
+        .trim()
+        .toLowerCase();
       process.stdout.write(`Transcription: '${text}'\n`);
       interpreter.interpret(text);
     });
